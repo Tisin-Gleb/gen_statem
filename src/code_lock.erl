@@ -75,6 +75,9 @@ handle_event(cast, {button,LockButton}, {open,LockButton}, Data) ->
 handle_event(cast, {button,_}, {open,_}, _Data) ->
     {keep_state_and_data,[postpone]};
 handle_event(
+    {call, From}, {change_password, Password}, {open, _}, _Data) when Password =:= [] ->
+    {keep_state_and_data, [{reply, From, {error, invalid_password}}]};
+handle_event(
     {call, From}, {change_password, Password}, {open, _}, Data) ->
     NewLength = length(Password),
     NewData = Data#{
@@ -84,9 +87,6 @@ handle_event(
     },
     io:format("Смена пароля~n"),
     {keep_state, NewData, [{reply, From, ok}]};
-handle_event(
-    {call, From}, {change_password, _}, {open, _}, _Data) ->
-    {keep_state_and_data, [{reply, From, {error, invalid_password}}]};
 handle_event(
     {call, From}, {change_password, _}, _State, _Data) ->
     io:format("Смена пароля запрещена~n"),
