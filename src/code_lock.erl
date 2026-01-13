@@ -55,6 +55,7 @@ handle_event(
                 ?MAX_ATTEMPTS ->
                     {next_state, {suspended, LockButton}, Data#{buttons := NewButtons, attempts := 0}};
                 _ ->
+                    io:format("Неверный пароль. Неправильных вводов: ~p~n",[NewAttempts]),
                     {keep_state, Data#{buttons := [], attempts := NewAttempts},
                     [{state_timeout,10_000,button}]}
             end;
